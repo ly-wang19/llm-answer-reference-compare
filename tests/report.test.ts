@@ -97,6 +97,58 @@ describe("report generation", () => {
     expect(html).toContain('href="#ref-doubao-2">[2]</a>');
   });
 
+  it("does not link ordinary bare numbers on platforms without bare citation markers", () => {
+    const qianwenRun = parseRunResult({
+      ...sample,
+      platforms: [
+        {
+          platform: "qianwen",
+          label: "千问",
+          url: "https://tongyi.aliyun.com/qianwen/",
+          status: "success",
+          answerMarkdown: "700 分可以重点参考 985 高校，2025 年历史类 666 分也只是普通分数文本。",
+          references: [
+            {
+              marker: "5",
+              title: "来源五",
+              url: "https://example.com/five",
+              normalizedUrl: "https://example.com/five",
+              text: "来源五"
+            },
+            {
+              marker: "6",
+              title: "来源六",
+              url: "https://example.com/six",
+              normalizedUrl: "https://example.com/six",
+              text: "来源六"
+            },
+            {
+              marker: "8",
+              title: "来源八",
+              url: "https://example.com/eight",
+              normalizedUrl: "https://example.com/eight",
+              text: "来源八"
+            },
+            {
+              marker: "9",
+              title: "来源九",
+              url: "https://example.com/nine",
+              normalizedUrl: "https://example.com/nine",
+              text: "来源九"
+            }
+          ]
+        }
+      ]
+    });
+
+    const html = renderHtmlReport(qianwenRun);
+
+    expect(html).toContain("985 高校");
+    expect(html).toContain("666 分");
+    expect(html).not.toContain("[9]</a><a class=\"cite-link\"");
+    expect(html).not.toContain("[6]</a><a class=\"cite-link\"");
+  });
+
   it("deduplicates references by normalized URL", () => {
     const matrix = buildReferenceMatrix(run);
     const shared = matrix.find((row) => row.key === "https://gjj.gz.gov.cn");

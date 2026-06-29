@@ -731,6 +731,10 @@ function answerHasInlineCitations(platform: Platform): boolean {
     return true;
   }
 
+  if (platform.platform !== "dknowc-chat") {
+    return false;
+  }
+
   const bareMatches = [...platform.answerMarkdown.matchAll(/([。；，、\s>])(\d{1,4})(?=<|\s|。|；|，|、)/g)];
   return bareMatches.some((match) =>
     splitCitationDigits(match[2], sortedMarkers).some((marker) => markers.has(marker))
@@ -863,6 +867,10 @@ function linkInlineCitations(html: string, platform: Platform): string {
     const right = whole.startsWith("【") ? "】" : "]";
     return `<a class="cite-link" href="#${referenceId(platform.platform, reference)}">${left}${escapeHtml(marker)}${right}</a>`;
   });
+
+  if (platform.platform !== "dknowc-chat") {
+    return withBracketLinks;
+  }
 
   return withBracketLinks.replace(/([。；，、\s>])(\d{1,4})(?=<|\s|。|；|，|、)/g, (_whole, prefix: string, digits: string) => {
     const citationMarkers = splitCitationDigits(digits, sortedMarkers);

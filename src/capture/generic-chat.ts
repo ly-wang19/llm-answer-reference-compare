@@ -250,6 +250,10 @@ async function extractAnswer(
     }
   }
 
+  if (config.name === "dknowc-chat") {
+    return extractDknowcAnswer(page);
+  }
+
   if (config.name === "kimi") {
     return extractKimiAnswer(page);
   }
@@ -380,6 +384,32 @@ async function extractKimiAnswer(page: Page): Promise<string> {
   return normalizeAnswerText(text);
 }
 
+async function extractDknowcAnswer(page: Page): Promise<string> {
+  if (await isDknowcStillLoading(page)) {
+    return "";
+  }
+
+  return page.locator(".czkj-robot:not(.chat-load-text) .czkj-msg").evaluateAll((nodes) => {
+    const texts = nodes
+      .map((node) => (node as HTMLElement).innerText?.trim() || "")
+      .filter((text) =>
+        text
+        && !/您好，我是深知晓|很高兴为您服务|您可以试试/.test(text)
+        && !/AI正在分析|AI 正在分析|AI 正翻阅|请稍等|正在研究/.test(text)
+      );
+    return texts.at(-1) || "";
+  }).then((text) => normalizeAnswerText(text)).catch(() => "");
+}
+
+async function isDknowcStillLoading(page: Page): Promise<boolean> {
+  const loading = page.locator(".czkj-robot.chat-load-text, .chat-load-text, .loading-header").last();
+  if (await loading.isVisible().catch(() => false)) {
+    const text = await loading.innerText().catch(() => "");
+    return !text || looksLikeLoadingText(text) || text.includes("正在研究");
+  }
+  return false;
+}
+
 async function waitForAnswer(
   config: PlatformConfig,
   page: import("@playwright/test").Page,
@@ -392,6 +422,11 @@ async function waitForAnswer(
   let stableCount = 0;
 
   while (Date.now() < deadline) {
+    if (config.name === "dknowc-chat" && await isDknowcStillLoading(page)) {
+      await page.waitForTimeout(1500);
+      continue;
+    }
+
     const platformFailure = await detectPlatformFailure(config, page);
     if (platformFailure) {
       throw new Error(platformFailure);
@@ -616,6 +651,96 @@ async function extractQianwenReferences(
 
   if (linked.length > 0) {
     return linked;
+  }
+
+  const sourceCards = await page.locator("[data-c='refer_panel'][data-d='card'], [id^='deep-think-source-card']").evaluateAll((nodes, base) => {
+    const seen = new Set<string>();
+    const items: Reference[] = [];
+    for (const node of nodes) {
+      const element = node as HTMLElement;
+      const rawPayload = element.getAttribute("data-click-extra")
+        || element.getAttribute("data-exposure-extra")
+        || element.getAttribute("data-log-params")
+        || "";
+      const payload = parsePayload(rawPayload);
+      const rawUrl = payload.ref_url || payload.url || "";
+      if (!rawUrl || shouldIgnore(rawUrl)) {
+        continue;
+      }
+      const normalizedUrl = normalizeInBrowser(rawUrl, base as string);
+      const marker = payload.refer_num || element.querySelector("[class*='index']")?.textContent?.trim() || String(items.length + 1);
+      const key = `${normalizedUrl}#${marker}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      const title = payload.title
+        || element.querySelector("[class*='title']")?.textContent?.trim()
+        || readableUrlTitle(normalizedUrl);
+      const source = element.querySelector("[class*='source'], [class*='name']")?.textContent?.trim().replace(/\s+/g, " ");
+      const snippet = element.querySelector("[class*='content']")?.textContent?.trim().replace(/\s+/g, " ").slice(0, 500);
+      items.push({
+        title,
+        url: normalizedUrl,
+        normalizedUrl,
+        marker,
+        text: source || title,
+        snippet
+      });
+    }
+    return items;
+
+    function parsePayload(raw: string): Record<string, string> {
+      if (!raw) {
+        return {};
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        return typeof parsed === "object" && parsed ? parsed as Record<string, string> : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function shouldIgnore(rawUrl: string): boolean {
+      const lowerUrl = rawUrl.toLowerCase();
+      return lowerUrl.includes("alicdn.com")
+        || lowerUrl.includes("qianwen.com")
+        || lowerUrl.includes("tongyi.aliyun.com")
+        || lowerUrl.includes("terms.alicdn.com")
+        || rawUrl.startsWith("#");
+    }
+
+    function normalizeInBrowser(rawUrl: string, baseUrl: string): string {
+      try {
+        const url = new URL(rawUrl, baseUrl);
+        url.hash = "";
+        url.hostname = url.hostname.toLowerCase();
+        if (url.pathname !== "/") {
+          url.pathname = url.pathname.replace(/\/+$/, "");
+        }
+        if (url.pathname === "/") {
+          url.pathname = "";
+        }
+        return url.toString().replace(/\/$/, "");
+      } catch {
+        return rawUrl.trim();
+      }
+    }
+
+    function readableUrlTitle(rawUrl: string): string {
+      try {
+        const url = new URL(rawUrl);
+        const path = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, "");
+        return path ? `${url.hostname}/${path}` : url.hostname;
+      } catch {
+        return rawUrl;
+      }
+    }
+  }, baseUrl);
+
+  if (sourceCards.length > 0) {
+    return sourceCards;
   }
 
   return page.locator(".qk-markdown.qk-markdown-react, #qk-markdown-react").last().evaluate((node, base) => {
