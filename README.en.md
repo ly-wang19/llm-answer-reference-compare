@@ -6,6 +6,8 @@ This is a local Playwright-based tool for collecting answers and cited reference
 
 > This project compares answers and references only. It is not a fact-checking verdict engine.
 
+Claude Code users can read [CLAUDE.md](CLAUDE.md) for agent-oriented run instructions.
+
 ## Features
 
 - Multi-platform capture with persistent local browser profiles
