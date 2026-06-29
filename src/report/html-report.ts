@@ -50,13 +50,13 @@ export function renderHtmlReport(run: RunResult): string {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(90deg, rgba(15, 118, 110, 0.08), rgba(29, 78, 216, 0.06), rgba(161, 92, 0, 0.06)),
-        linear-gradient(180deg, #ffffff 0%, var(--bg) 360px);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(246, 247, 249, 0.92) 340px),
+        linear-gradient(90deg, rgba(15, 118, 110, 0.08), rgba(29, 78, 216, 0.05), rgba(161, 92, 0, 0.05));
       color: var(--text);
       line-height: 1.55;
     }
     a { color: var(--blue); overflow-wrap: anywhere; }
-    .shell { max-width: 1440px; margin: 0 auto; padding: 22px 28px 44px; }
+    .shell { max-width: 1480px; margin: 0 auto; padding: 18px 28px 44px; }
     .topbar {
       position: sticky;
       top: 0;
@@ -82,7 +82,9 @@ export function renderHtmlReport(run: RunResult): string {
       width: 30px;
       height: 30px;
       border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--blue));
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0)),
+        linear-gradient(135deg, var(--accent), var(--blue));
       box-shadow: 0 10px 24px rgba(15, 118, 110, 0.24);
       flex: 0 0 auto;
     }
@@ -97,21 +99,20 @@ export function renderHtmlReport(run: RunResult): string {
       font-weight: 760;
       text-decoration: none;
     }
-    header.hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
-      gap: 18px;
-      align-items: stretch;
-      margin: 10px 0 24px;
-    }
+    header.hero { margin: 8px 0 18px; }
     .hero-main {
-      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+      gap: 22px;
+      align-items: stretch;
+      padding: 24px;
       border: 1px solid rgba(217, 222, 232, 0.88);
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.9);
       box-shadow: var(--shadow);
     }
-    h1 { margin: 0 0 12px; font-size: clamp(30px, 4vw, 54px); line-height: 1; letter-spacing: 0; }
+    .hero-copy { min-width: 0; }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 3.4vw, 48px); line-height: 1.04; letter-spacing: 0; }
     h2 { margin: 0; font-size: 21px; letter-spacing: 0; }
     h3 { margin: 0; font-size: 15px; letter-spacing: 0; }
     .en {
@@ -130,8 +131,8 @@ export function renderHtmlReport(run: RunResult): string {
       text-transform: uppercase;
     }
     .question {
-      margin-top: 18px;
-      padding: 16px 18px;
+      margin-top: 16px;
+      padding: 15px 16px;
       border-left: 4px solid var(--accent);
       background: #f9fbfc;
       color: var(--text);
@@ -141,9 +142,10 @@ export function renderHtmlReport(run: RunResult): string {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+      align-content: start;
     }
     .metric {
-      min-height: 116px;
+      min-height: 104px;
       padding: 15px;
       background: var(--panel);
       border: 1px solid var(--border);
@@ -185,7 +187,7 @@ export function renderHtmlReport(run: RunResult): string {
     .insight strong { display: block; color: var(--text); font-size: 15px; }
     section {
       margin-top: 18px;
-      padding: 22px;
+      padding: 20px;
       background: rgba(255, 255, 255, 0.78);
       border: 1px solid rgba(217, 222, 232, 0.8);
       border-radius: 8px;
@@ -220,7 +222,7 @@ export function renderHtmlReport(run: RunResult): string {
     }
     .status-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 12px;
     }
     .status-item, .answer-card, .ref-list {
@@ -229,7 +231,18 @@ export function renderHtmlReport(run: RunResult): string {
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(17, 24, 39, 0.04);
     }
-    .status-item { padding: 14px; }
+    .status-item {
+      position: relative;
+      overflow: hidden;
+      padding: 14px;
+    }
+    .status-item::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--platform-accent, var(--accent));
+    }
     .platform-title {
       display: flex;
       justify-content: space-between;
@@ -253,7 +266,7 @@ export function renderHtmlReport(run: RunResult): string {
     .coverage-fill {
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--blue));
+      background: linear-gradient(90deg, var(--platform-accent, var(--accent)), var(--blue));
     }
     .status-ok, .status-success { color: var(--ok); font-weight: 850; }
     .status-failed, .status-timeout, .status-login_required, .status-verification_required {
@@ -291,22 +304,31 @@ export function renderHtmlReport(run: RunResult): string {
     .answer-grid {
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: minmax(440px, 520px);
+      grid-auto-columns: minmax(430px, 500px);
       gap: 14px;
       align-items: start;
       width: max-content;
       min-width: 100%;
     }
     .answer-card {
+      position: relative;
       overflow: hidden;
       scroll-snap-align: start;
+    }
+    .answer-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: var(--platform-accent, var(--accent));
+      z-index: 3;
     }
     .answer-head {
       position: sticky;
       top: 51px;
       z-index: 2;
-      min-height: 62px;
-      padding: 14px 16px;
+      min-height: 66px;
+      padding: 16px 16px 13px;
       border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
@@ -314,6 +336,19 @@ export function renderHtmlReport(run: RunResult): string {
       align-items: center;
       background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(10px);
+    }
+    .answer-head h3, .ref-list-head h3, .platform-title h3 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .answer-head h3::before, .ref-list-head h3::before, .platform-title h3::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--platform-accent, var(--accent));
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.09);
     }
     .answer-subtitle { margin-top: 2px; color: var(--subtle); font-size: 12px; }
     .answer-meta {
@@ -343,15 +378,23 @@ export function renderHtmlReport(run: RunResult): string {
     }
     .source-strip {
       margin: 10px 16px 0;
-      padding: 10px;
+      padding: 0;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fbfcfe;
-      max-height: 138px;
-      overflow: auto;
+      overflow: hidden;
     }
+    .source-strip summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 850;
+      list-style: none;
+    }
+    .source-strip summary::-webkit-details-marker { display: none; }
     .source-strip-label {
-      margin-bottom: 7px;
+      padding: 0 12px 8px;
       color: var(--muted);
       font-size: 12px;
       font-weight: 760;
@@ -360,6 +403,9 @@ export function renderHtmlReport(run: RunResult): string {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      max-height: 116px;
+      overflow: auto;
+      padding: 0 12px 12px;
     }
     .source-chip {
       display: inline-flex;
@@ -376,10 +422,10 @@ export function renderHtmlReport(run: RunResult): string {
     }
     .answer-body {
       padding: 18px 20px 22px;
-      height: 760px;
+      height: 680px;
       overflow: auto;
-      font-size: 15px;
-      line-height: 1.78;
+      font-size: 15.5px;
+      line-height: 1.82;
       background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
     }
     .answer-body h1, .answer-body h2, .answer-body h3 {
@@ -395,6 +441,22 @@ export function renderHtmlReport(run: RunResult): string {
       padding-left: 22px;
     }
     .answer-body li { margin: 6px 0; }
+    .answer-body table {
+      min-width: 100%;
+      margin: 10px 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+    .answer-body th, .answer-body td {
+      padding: 9px 10px;
+      vertical-align: top;
+    }
+    .answer-body th {
+      position: static;
+      background: #f7f9fc;
+    }
     .answer-body strong { font-weight: 800; }
     .answer-body p:first-child { margin-top: 0; }
     .answer-body p:last-child { margin-bottom: 0; }
@@ -409,15 +471,16 @@ export function renderHtmlReport(run: RunResult): string {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 22px;
-      min-height: 22px;
+      min-width: 20px;
+      min-height: 20px;
       padding: 0 6px;
       border-radius: 999px;
       background: #dff3ee;
       color: var(--accent-strong);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 850;
       text-decoration: none;
+      vertical-align: 0.08em;
     }
     .table-wrap {
       overflow: auto;
@@ -460,16 +523,24 @@ export function renderHtmlReport(run: RunResult): string {
     .refs {
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: minmax(360px, 440px);
+      grid-auto-columns: minmax(360px, 430px);
       gap: 14px;
       width: max-content;
       min-width: 100%;
     }
     .ref-list {
+      position: relative;
       padding: 15px;
       max-height: 620px;
       overflow: auto;
       scroll-snap-align: start;
+    }
+    .ref-list::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: var(--platform-accent, var(--accent));
     }
     .ref-list-head {
       display: flex;
@@ -484,8 +555,28 @@ export function renderHtmlReport(run: RunResult): string {
       margin: 0;
       padding-left: 22px;
     }
-    .ref-list li { padding-left: 3px; }
+    .ref-list li {
+      padding: 0 0 10px 3px;
+      border-bottom: 1px solid var(--line);
+    }
+    .ref-list li:last-child { border-bottom: 0; padding-bottom: 0; }
     .ref-list li::marker { color: var(--accent); font-weight: 850; }
+    .ref-snippet {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .ref-snippet summary {
+      cursor: pointer;
+      color: var(--accent-strong);
+      font-weight: 820;
+    }
+    .ref-snippet p {
+      margin: 6px 0 0;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #f7f9fc;
+    }
     .muted { color: var(--muted); }
     .empty-state {
       margin: 0;
@@ -501,7 +592,7 @@ export function renderHtmlReport(run: RunResult): string {
       font-size: 12px;
     }
     @media (max-width: 980px) {
-      header.hero { grid-template-columns: 1fr; }
+      .hero-main { grid-template-columns: 1fr; }
       .insight-bar { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
@@ -536,20 +627,22 @@ export function renderHtmlReport(run: RunResult): string {
 
     <header class="hero">
       <div class="hero-main">
-        <p class="eyebrow">本地对比报告 / Local comparison report</p>
-        <h1>答案与参考来源对比</h1>
-        <div class="question"><strong>问题 / Question</strong><br />${escapeHtml(run.question)}</div>
-        <div class="insight-bar">
-          <div class="insight"><strong>${escapeHtml(mostCitedPlatform?.label || "N/A")}</strong>捕获来源最多 / Most references</div>
-          <div class="insight"><strong>${successCount === platforms.length ? "全部成功" : `${platforms.length - successCount} 个需关注`}</strong>平台运行状态 / Run health</div>
-          <div class="insight"><strong>${escapeHtml(shortDate(run.createdAt))}</strong>本地生成 / Generated locally</div>
+        <div class="hero-copy">
+          <p class="eyebrow">本地对比报告 / Local comparison report</p>
+          <h1>答案与参考来源对比</h1>
+          <div class="question"><strong>问题 / Question</strong><br />${escapeHtml(run.question)}</div>
+          <div class="insight-bar">
+            <div class="insight"><strong>${escapeHtml(mostCitedPlatform?.label || "N/A")}</strong>捕获来源最多 / Most references</div>
+            <div class="insight"><strong>${successCount === platforms.length ? "全部成功" : `${platforms.length - successCount} 个需关注`}</strong>平台运行状态 / Run health</div>
+            <div class="insight"><strong>${escapeHtml(shortDate(run.createdAt))}</strong>本地生成 / Generated locally</div>
+          </div>
         </div>
-      </div>
-      <div class="hero-side">
-        <div class="metric"><strong>${successCount}/${platforms.length}</strong><span>成功平台 / Successful platforms</span></div>
-        <div class="metric"><strong>${totalReferences}</strong><span>捕获来源 / References captured</span></div>
-        <div class="metric"><strong>${matrix.length}</strong><span>去重来源 / Unique references</span></div>
-        <div class="metric"><strong>${Math.round(totalReferences / Math.max(1, platforms.length))}</strong><span>平台均值 / Average per platform</span></div>
+        <div class="hero-side">
+          <div class="metric"><strong>${successCount}/${platforms.length}</strong><span>成功平台 / Successful platforms</span></div>
+          <div class="metric"><strong>${totalReferences}</strong><span>捕获来源 / References captured</span></div>
+          <div class="metric"><strong>${matrix.length}</strong><span>去重来源 / Unique references</span></div>
+          <div class="metric"><strong>${Math.round(totalReferences / Math.max(1, platforms.length))}</strong><span>平台均值 / Average per platform</span></div>
+        </div>
       </div>
     </header>
 
@@ -646,7 +739,7 @@ export function renderHtmlReport(run: RunResult): string {
 
 function renderStatusCard(platform: Platform, maxReferences: number): string {
   const coverage = Math.round((platform.references.length / maxReferences) * 100);
-  return `<article class="status-item">
+  return `<article class="status-item" style="${platformStyle(platform.platform)}">
     <div class="platform-title">
       <h3>${escapeHtml(platform.label)}</h3>
       <span class="badge status-${platform.status}">${escapeHtml(statusLabel(platform.status))}</span>
@@ -660,9 +753,9 @@ function renderStatusCard(platform: Platform, maxReferences: number): string {
 function renderAnswerCard(platform: Platform): string {
   const body =
     platform.status === "success"
-      ? linkInlineCitations(md.render(formatAnswerForDisplay(platform.answerMarkdown)), platform)
+      ? linkInlineCitations(md.render(formatAnswerForDisplay(cleanAnswerForReport(platform.answerMarkdown))), platform)
       : `<p class="answer-error">${escapeHtml(platform.error || platform.status)}</p>`;
-  return `<article class="answer-card">
+  return `<article class="answer-card" style="${platformStyle(platform.platform)}">
     <div class="answer-head">
       <div>
         <h3>${escapeHtml(platform.label)}</h3>
@@ -696,14 +789,15 @@ function renderSourceStrip(platform: Platform): string {
     ? `<span class="source-chip">+${platform.references.length - 12} 更多</span>`
     : "";
 
-  return `<div class="source-strip">
-    <div class="source-strip-label">未捕获到平台原生逐句引用关系。以下仅为该平台返回或页面暴露的来源列表：<span class="en">No platform-provided sentence-level citation mapping was captured. Source list only:</span></div>
+  return `<details class="source-strip">
+    <summary>来源概览 · ${platform.references.length} 条</summary>
+    <div class="source-strip-label">该平台返回或页面暴露的来源列表；如果答案没有逐句标号，这里不自动猜测引用关系。<span class="en">Source list only when sentence-level mappings are not exposed.</span></div>
     <div class="source-chips">${chips}${overflow}</div>
-  </div>`;
+  </details>`;
 }
 
 function renderReferenceList(platform: Platform): string {
-  return `<article class="ref-list">
+  return `<article class="ref-list" style="${platformStyle(platform.platform)}">
     <div class="ref-list-head">
       <h3>${escapeHtml(platform.label)}</h3>
       <span class="badge neutral">${platform.references.length} 来源</span>
@@ -719,7 +813,9 @@ function renderReferenceList(platform: Platform): string {
 function renderReferenceItem(platform: Platform, reference: Reference, index: number): string {
   const title = reference.title || reference.text || reference.url;
   const marker = `<strong>[${escapeHtml(displayMarker(reference, index))}]</strong> `;
-  const snippet = reference.snippet ? `<div class="muted">${escapeHtml(reference.snippet)}</div>` : "";
+  const snippet = reference.snippet
+    ? `<details class="ref-snippet"><summary>查看摘录</summary><p>${escapeHtml(reference.snippet)}</p></details>`
+    : "";
   return `<li id="${referenceId(platform.platform, reference)}">${marker}<a href="${escapeAttribute(reference.url)}">${escapeHtml(title)}</a>${snippet}</li>`;
 }
 
@@ -755,9 +851,41 @@ function renderArtifactLinks(platform: Platform): string {
   return links.length ? `<div class="artifact-links">${links.join("")}</div>` : "";
 }
 
+function platformStyle(platform: string): string {
+  const colors: Record<string, string> = {
+    doubao: "#7c3aed",
+    yuanbao: "#0f766e",
+    deepseek: "#1d4ed8",
+    qianwen: "#c2410c",
+    "dknowc-chat": "#6d28d9",
+    kimi: "#be185d",
+    zhipu: "#047857",
+    chatgpt: "#087443",
+    claude: "#a15c00",
+    gemini: "#2563eb"
+  };
+  return `--platform-accent: ${colors[platform] || "#0f766e"};`;
+}
+
+function cleanAnswerForReport(answer: string): string {
+  return answer
+    .replace(/^已创建本问题知识专库（[^）]+）\s*/gm, "")
+    .replace(/^已完成思考（[^）]+）\s*/gm, "")
+    .replace(/^AI综合所有相关权威材料后，参考性解读如下，建议点击角标查看所依据的材料原文。\s*/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function formatAnswerForDisplay(answer: string): string {
   const normalized = answer
     .replace(/\r\n?/g, "\n")
+    .replace(/^表格\s*$/gm, "")
+    .replace(/[ \t]*\n[ \t]*/g, "\n")
+    .replace(/^([^\n|]+)\t+([^\n|]+)\t+([^\n|]+)$/gm, "$1 | $2 | $3")
+    .replace(/([。！？])([📌🎯🌟💡])/g, "$1\n\n$2")
+    .replace(/([。！？])((?:批次定位|位次是更关键|物理类700分|历史类700分|官方信息查询渠道|院校层次|第一梯队|第二梯队|其他顶尖高校|补充信息|总而言之)[:：]?)/g, "$1\n\n$2")
+    .replace(/(档位)\n+(可参考院校)\n+(判断)/g, "$1 | $2 | $3\n--- | --- | ---")
+    .replace(/^(冲|稳|保)\n+([^\n]+)\n+([^\n]+)$/gm, "$1 | $2 | $3")
     .replace(/([。！？】])([一二三四五六七八九十]+、)/g, "$1\n\n$2")
     .replace(/([。！？】])((?:贷款|申请|首付|利率|期限|套数|额度|商转公|其他|参考文献|新增|提高|拓宽|多种)[^。\n]{0,24}[:：])/g, "$1\n\n$2")
     .replace(/(要点)([一二三四五六七八九十]+、)/g, "$1\n\n$2")
