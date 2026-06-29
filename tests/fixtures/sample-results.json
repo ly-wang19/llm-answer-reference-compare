@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1",
+  "question": "广州公积金贷款政策有哪些最新要点？",
+  "createdAt": "2026-06-29T10:00:00+08:00",
+  "platforms": [
+    {
+      "platform": "chatgpt",
+      "label": "ChatGPT",
+      "url": "https://chatgpt.com/",
+      "status": "success",
+      "answerMarkdown": "广州公积金贷款政策通常需要关注贷款额度、首付比例、缴存时长和家庭套数认定。建议以广州住房公积金管理中心的公开信息为准。",
+      "references": [
+        {
+          "title": "广州住房公积金管理中心",
+          "url": "https://gjj.gz.gov.cn/",
+          "normalizedUrl": "https://gjj.gz.gov.cn",
+          "text": "广州住房公积金管理中心"
+        },
+        {
+          "title": "广州市人民政府",
+          "url": "https://www.gz.gov.cn/",
+          "normalizedUrl": "https://www.gz.gov.cn",
+          "text": "广州市人民政府"
+        }
+      ],
+      "artifacts": {
+        "screenshot": "screenshots/chatgpt.png"
+      },
+      "durationMs": 1200
+    },
+    {
+      "platform": "dknowc-chat",
+      "label": "深知晓",
+      "url": "https://yun.dknowc.cn/wlcb/dknowc-chat/",
+      "status": "success",
+      "answerMarkdown": "广州公积金贷款政策要点包括额度计算、首套与二套差异、材料要求以及办理渠道。回答应结合官方公积金中心信息和地方政府公开文件。",
+      "references": [
+        {
+          "title": "广州住房公积金管理中心",
+          "url": "https://gjj.gz.gov.cn/",
+          "normalizedUrl": "https://gjj.gz.gov.cn",
+          "text": "广州住房公积金管理中心"
+        },
+        {
+          "title": "广东政务服务网",
+          "url": "https://www.gdzwfw.gov.cn/",
+          "normalizedUrl": "https://www.gdzwfw.gov.cn",
+          "text": "广东政务服务网"
+        }
+      ],
+      "artifacts": {
+        "screenshot": "screenshots/dknowc-chat.png"
+      },
+      "durationMs": 980
+    },
+    {
+      "platform": "yuanbao",
+      "label": "元宝",
+      "url": "https://yuanbao.tencent.com/",
+      "status": "failed",
+      "answerMarkdown": "",
+      "references": [],
+      "error": "Login required during sample capture."
+    }
+  ]
+}

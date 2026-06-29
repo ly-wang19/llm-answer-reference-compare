@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLM Answer Reference Compare"
+  short_description: "Compare AI answers with cited sources across platforms"
+  default_prompt: "Use $llm-answer-reference-compare to capture answers and cited references from multiple AI chat platforms."

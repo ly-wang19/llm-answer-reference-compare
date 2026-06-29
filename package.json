@@ -1,0 +1,46 @@
+{
+  "name": "llm-answer-reference-compare",
+  "version": "0.1.0",
+  "description": "Collect and compare answers and cited references from AI chat products.",
+  "type": "module",
+  "bin": {
+    "llm-compare": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "specs",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "compare": "tsx src/cli.ts",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "llm",
+    "playwright",
+    "comparison",
+    "citations",
+    "references"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "^1.49.1",
+    "commander": "^12.1.0",
+    "markdown-it": "^14.1.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

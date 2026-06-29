@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.*
+
+runs/
+profiles/
+traces/
+screenshots/
+html/
+
+.DS_Store
+*.tmp
