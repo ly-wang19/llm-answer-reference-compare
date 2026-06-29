@@ -831,10 +831,8 @@ function answerHasInlineCitations(platform: Platform): boolean {
     return false;
   }
 
-  const bareMatches = [...platform.answerMarkdown.matchAll(/([。；，、\s>])(\d{1,4})(?=<|\s|。|；|，|、)/g)];
-  return bareMatches.some((match) =>
-    splitCitationDigits(match[2], sortedMarkers).some((marker) => markers.has(marker))
-  );
+  const bareMatches = [...platform.answerMarkdown.matchAll(/(^|[^\d[])(\d{1,8})(?=\s|。|；|，|、|\.|,|;|:|：|）|\)|$)/g)];
+  return bareMatches.some((match) => Boolean(splitBareCitationSuffix(match[2], sortedMarkers, markers)));
 }
 
 function displayMarker(reference: Reference, index: number): string {
@@ -1000,12 +998,12 @@ function linkInlineCitations(html: string, platform: Platform): string {
     return withBracketLinks;
   }
 
-  return withBracketLinks.replace(/([。；，、\s>])(\d{1,4})(?=<|\s|。|；|，|、)/g, (_whole, prefix: string, digits: string) => {
-    const citationMarkers = splitCitationDigits(digits, sortedMarkers);
-    if (!citationMarkers.every((marker) => markers.has(marker))) {
+  return withBracketLinks.replace(/(^|[^\d[])(\d{1,8})(?=<|\s|。|；|，|、|\.|,|;|:|：|）|\)|$)/g, (_whole, prefix: string, digits: string) => {
+    const split = splitBareCitationSuffix(digits, sortedMarkers, markers);
+    if (!split) {
       return `${prefix}${digits}`;
     }
-    const linked = citationMarkers.map((marker) => {
+    const linked = split.markers.map((marker) => {
       if (!markers.has(marker)) {
         return escapeHtml(marker);
       }
@@ -1015,8 +1013,26 @@ function linkInlineCitations(html: string, platform: Platform): string {
       }
       return `<a class="cite-link" href="#${referenceId(platform.platform, reference)}">[${escapeHtml(marker)}]</a>`;
     }).join("");
-    return `${prefix}${linked}`;
+    return `${prefix}${escapeHtml(split.plainPrefix)}${linked}`;
   });
+}
+
+function splitBareCitationSuffix(
+  digits: string,
+  sortedMarkers: string[],
+  markers: Set<string>
+): { plainPrefix: string; markers: string[] } | undefined {
+  for (let start = 0; start < digits.length; start += 1) {
+    const suffix = digits.slice(start);
+    const citationMarkers = splitCitationDigits(suffix, sortedMarkers);
+    if (citationMarkers.length > 0 && citationMarkers.every((marker) => markers.has(marker))) {
+      return {
+        plainPrefix: digits.slice(0, start),
+        markers: citationMarkers
+      };
+    }
+  }
+  return undefined;
 }
 
 function splitCitationDigits(digits: string, markers: string[]): string[] {

@@ -149,6 +149,52 @@ describe("report generation", () => {
     expect(html).not.toContain("[6]</a><a class=\"cite-link\"");
   });
 
+  it("links DKnowC bare citation markers attached to sentence text", () => {
+    const dknowcRun = parseRunResult({
+      ...sample,
+      platforms: [
+        {
+          platform: "dknowc-chat",
+          label: "深知晓",
+          url: "https://yun.dknowc.cn/wlcb/dknowc-chat/",
+          status: "success",
+          answerMarkdown:
+            "物理类600分以上有23608人203。每个院校专业组可选报不超过6个专业304。填报时间到17:00301。2026年不是引用。",
+          references: [
+            {
+              marker: "203",
+              title: "一分一段表",
+              url: "https://example.com/rank",
+              normalizedUrl: "https://example.com/rank",
+              text: "一分一段表"
+            },
+            {
+              marker: "304",
+              title: "志愿填报指南",
+              url: "https://example.com/rules",
+              normalizedUrl: "https://example.com/rules",
+              text: "志愿填报指南"
+            },
+            {
+              marker: "301",
+              title: "志愿填报安排",
+              url: "https://example.com/time",
+              normalizedUrl: "https://example.com/time",
+              text: "志愿填报安排"
+            }
+          ]
+        }
+      ]
+    });
+
+    const html = renderHtmlReport(dknowcRun);
+
+    expect(html).toContain('href="#ref-dknowc-chat-203">[203]</a>');
+    expect(html).toContain('href="#ref-dknowc-chat-304">[304]</a>');
+    expect(html).toContain('17:00<a class="cite-link" href="#ref-dknowc-chat-301">[301]</a>');
+    expect(html).toContain("2026年不是引用");
+  });
+
   it("deduplicates references by normalized URL", () => {
     const matrix = buildReferenceMatrix(run);
     const shared = matrix.find((row) => row.key === "https://gjj.gz.gov.cn");
