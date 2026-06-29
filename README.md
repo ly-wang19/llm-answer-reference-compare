@@ -91,6 +91,26 @@ npm run compare -- run \
   --interactive
 ```
 
+## Use As A Codex Skill
+
+If you use Codex, install the bundled skill by copying it into your Codex skills directory:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/llm-answer-reference-compare ~/.codex/skills/
+```
+
+Then start a Codex session in this repository and call the skill in natural language:
+
+```text
+Use $llm-answer-reference-compare to compare Doubao, Yuanbao, DeepSeek, Qianwen, and DKnowC Chat for this question:
+请简要回答：广州公积金贷款政策有哪些最新要点？如果页面支持参考文献，请列出参考文献。
+```
+
+Codex will use the skill instructions to run the local CLI, pause for manual login or verification when needed, inspect the captured artifacts, and regenerate the report.
+
+中文：如果你使用 Codex，可以把 `skills/llm-answer-reference-compare` 复制到 `~/.codex/skills/`，然后在 Codex 里说 `Use $llm-answer-reference-compare ...`。Skill 负责指导 Codex 调用本项目 CLI、处理登录交接、检查采集结果并生成报告。
+
 Use a custom website:
 
 ```bash
