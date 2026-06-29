@@ -59,6 +59,44 @@ describe("report generation", () => {
     expect(html).toContain("<li>广东省人民政府");
   });
 
+  it("does not treat years as bare numeric citation sequences", () => {
+    const yearRun = parseRunResult({
+      ...sample,
+      platforms: [
+        {
+          platform: "doubao",
+          label: "豆包",
+          url: "https://www.doubao.com/chat/",
+          status: "success",
+          answerMarkdown: "2026 年湖北物理类 700 分要看位次。结论来自官方表[1]和招生规则[2]。",
+          references: [
+            {
+              marker: "1",
+              title: "一分一段表",
+              url: "https://example.com/rank",
+              normalizedUrl: "https://example.com/rank",
+              text: "一分一段表"
+            },
+            {
+              marker: "2",
+              title: "招生规则",
+              url: "https://example.com/rules",
+              normalizedUrl: "https://example.com/rules",
+              text: "招生规则"
+            }
+          ]
+        }
+      ]
+    });
+
+    const html = renderHtmlReport(yearRun);
+
+    expect(html).toContain("2026 年湖北物理类");
+    expect(html).not.toContain("[2]</a>0");
+    expect(html).toContain('href="#ref-doubao-1">[1]</a>');
+    expect(html).toContain('href="#ref-doubao-2">[2]</a>');
+  });
+
   it("deduplicates references by normalized URL", () => {
     const matrix = buildReferenceMatrix(run);
     const shared = matrix.find((row) => row.key === "https://gjj.gz.gov.cn");

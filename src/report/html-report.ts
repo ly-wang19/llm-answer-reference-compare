@@ -865,7 +865,11 @@ function linkInlineCitations(html: string, platform: Platform): string {
   });
 
   return withBracketLinks.replace(/([。；，、\s>])(\d{1,4})(?=<|\s|。|；|，|、)/g, (_whole, prefix: string, digits: string) => {
-    const linked = splitCitationDigits(digits, sortedMarkers).map((marker) => {
+    const citationMarkers = splitCitationDigits(digits, sortedMarkers);
+    if (!citationMarkers.every((marker) => markers.has(marker))) {
+      return `${prefix}${digits}`;
+    }
+    const linked = citationMarkers.map((marker) => {
       if (!markers.has(marker)) {
         return escapeHtml(marker);
       }
